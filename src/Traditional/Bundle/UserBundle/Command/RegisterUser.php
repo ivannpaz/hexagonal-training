@@ -3,12 +3,27 @@
 namespace Traditional\Bundle\UserBundle\Command;
 
 use SimpleBus\Message\Name\NamedMessage;
+use Symfony\Component\Validator\Constraints as Assert;
 
 class RegisterUser implements NamedMessage
 {
 
+    /**
+     * @Assert\Email
+     * @var string
+     */
     private $email;
+
+    /**
+     * @Assert\NotBlank
+     * @var string
+     */
     private $password;
+
+    /**
+     * @Assert\Country
+     * @var string
+     */
     private $country;
 
     public function __construct($email, $password, $country)

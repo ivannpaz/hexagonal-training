@@ -3,6 +3,7 @@
 namespace Traditional\Bundle\UserBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Assert\Assertion;
 
 /**
  * @ORM\Entity
@@ -39,9 +40,9 @@ class User
      */
     private function __construct($email, $password, $country)
     {
-        $this->email = $email;
-        $this->password = $password;
-        $this->country = $country;
+        $this->setEmail($email);
+        $this->setPassword($password);
+        $this->setCountry($country);
     }
 
     public static function register($email, $password, $country)
@@ -54,18 +55,15 @@ class User
         return $this->id;
     }
 
-    public function setId($id)
-    {
-        $this->id = $id;
-    }
-
     public function getEmail()
     {
         return $this->email;
     }
 
-    public function setEmail($email)
+    private function setEmail($email)
     {
+        Assertion::email($email);
+
         $this->email = $email;
     }
 
@@ -74,8 +72,11 @@ class User
         return $this->password;
     }
 
-    public function setPassword($password)
+    private function setPassword($password)
     {
+        Assertion::string($password);
+        Assertion::notEmpty($password);
+
         $this->password = $password;
     }
 
@@ -84,8 +85,11 @@ class User
         return $this->country;
     }
 
-    public function setCountry($country)
+    private function setCountry($country)
     {
+        Assertion::string($country);
+        Assertion::notNull(Intl::getRegionBundle()->getCountryName($country), 'Not a country');
+
         $this->country = $country;
     }
 }
