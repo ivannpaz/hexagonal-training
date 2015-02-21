@@ -6,13 +6,19 @@ use Doctrine\ORM\Mapping as ORM;
 use Assert\Assertion;
 use Traditional\Bundle\UserBundle\Entity\EmailAddress;
 use Symfony\Component\Intl\Intl;
+use SimpleBus\Message\Recorder\ContainsRecordedMessages;
+use Traditional\Bundle\UserBundle\Event\UserWasRegistered;
+use SimpleBus\Message\Recorder\PrivateMessageRecorderCapabilities;
 
 /**
  * @ORM\Entity
  * @ORM\Table(name="traditional_user")
  */
-class User
+class User implements ContainsRecordedMessages
 {
+
+    use PrivateMessageRecorderCapabilities;
+
     /**
      * @ORM\Id
      * @ORM\Column(type="integer")
@@ -49,7 +55,11 @@ class User
 
     public static function register(EmailAddress $email, $password, $country)
     {
-        return new self($email, $password, $country);
+        $user = new self($email, $password, $country);
+
+        $user->record(new UserWasRegistered($user));
+
+        return $user;
     }
 
     public function getId()
