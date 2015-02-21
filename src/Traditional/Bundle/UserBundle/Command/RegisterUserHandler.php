@@ -3,22 +3,33 @@
 namespace Traditional\Bundle\UserBundle\Command;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-use SimpleBus\Message\Name\NamedMessage;
 use SimpleBus\Message\Message;
 use Traditional\Bundle\UserBundle\Entity\User;
 use SimpleBus\Message\Handler\MessageHandler;
 use Traditional\Bundle\UserBundle\Entity\EmailAddress;
+use Traditional\Bundle\UserBundle\Event\UserWasRegistered;
+use SimpleBus\Message\Recorder\RecordsMessages;
 
 class RegisterUserHandler implements MessageHandler
 {
 
+    /**
+     * @var ManagerRegistry
+     */
     private $doctrine;
-    private $mailer;
 
-    public function __construct(ManagerRegistry $doctrine, $mailer)
+    /**
+     * @var RecordsMessages
+     */
+    private $eventRecorder;
+
+    /**
+     * @param ManagerRegistry $doctrine
+     */
+    public function __construct(ManagerRegistry $doctrine, RecordsMessages $eventRecorder)
     {
         $this->doctrine = $doctrine;
-        $this->mailer = $mailer;
+        $this->eventRecorder = $eventRecorder;
     }
 
     /**
@@ -35,8 +46,6 @@ class RegisterUserHandler implements MessageHandler
         $entityManager = $this->doctrine->getManager();
         $entityManager->persist($user);
 
-        $emailMessage = \Swift_Message::newInstance('Welcome', 'Yes, welcome');
-        $emailMessage->setTo((string)$user->getEmail());
-        $this->mailer->send($emailMessage);
+        $this->eventRecorder->record(new UserWasRegistered($user));
     }
 }
