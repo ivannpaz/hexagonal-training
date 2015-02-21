@@ -19,7 +19,7 @@ class EmailAddress
         $this->emailAddress = $emailAddress;
     }
 
-    public function fromString($emailAddress)
+    public static function fromString($emailAddress)
     {
         return new self($emailAddress);
     }
