@@ -1,9 +1,13 @@
 ## Command Bus
 
 ```
-=> Command
-    => Comand Bus [contains:middlewares]
-        => Command Handler (one-to-one[Command:Handler])
+=> new Command
+    => ComandBus::handle  [
+        middleware,
+        middleware,
+        ...,
+    ]
+        => CommandHandler::handle() (one-to-one[Command:Handler])
             => No result is returned
 ```
 
