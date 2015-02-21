@@ -3,6 +3,9 @@
 namespace Traditional\Bundle\UserBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Assert\Assertion;
+use Traditional\Bundle\UserBundle\Entity\EmailAddress;
+use Symfony\Component\Intl\Intl;
 
 /**
  * @ORM\Entity
@@ -32,24 +35,36 @@ class User
      */
     private $country;
 
+    /**
+     * @param string $email
+     * @param string $password
+     * @param string $country
+     */
+    private function __construct(EmailAddress $email, $password, $country)
+    {
+        $this->setEmail($email);
+        $this->setPassword($password);
+        $this->setCountry($country);
+    }
+
+    public static function register(EmailAddress $email, $password, $country)
+    {
+        return new self($email, $password, $country);
+    }
+
     public function getId()
     {
         return $this->id;
     }
 
-    public function setId($id)
-    {
-        $this->id = $id;
-    }
-
     public function getEmail()
     {
-        return $this->email;
+        return EmailAddress::fromString($this->email);
     }
 
-    public function setEmail($email)
+    private function setEmail(EmailAddress $email)
     {
-        $this->email = $email;
+        $this->email = (string)$email;
     }
 
     public function getPassword()
@@ -57,8 +72,11 @@ class User
         return $this->password;
     }
 
-    public function setPassword($password)
+    private function setPassword($password)
     {
+        Assertion::string($password);
+        Assertion::notEmpty($password);
+
         $this->password = $password;
     }
 
@@ -67,8 +85,11 @@ class User
         return $this->country;
     }
 
-    public function setCountry($country)
+    private function setCountry($country)
     {
+        Assertion::string($country);
+        Assertion::notNull(Intl::getRegionBundle()->getCountryName($country), 'Not a country');
+
         $this->country = $country;
     }
 }
