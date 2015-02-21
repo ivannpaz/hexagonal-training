@@ -33,7 +33,6 @@ class RegisterUserHandler implements MessageHandler
 
         $entityManager = $this->doctrine->getManager();
         $entityManager->persist($user);
-        $entityManager->flush();
 
         $emailMessage = \Swift_Message::newInstance('Welcome', 'Yes, welcome');
         $emailMessage->setTo($user->getEmail());
