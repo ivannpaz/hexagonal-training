@@ -7,8 +7,6 @@ use SimpleBus\Message\Message;
 use Traditional\Bundle\UserBundle\Entity\User;
 use SimpleBus\Message\Handler\MessageHandler;
 use Traditional\Bundle\UserBundle\Entity\EmailAddress;
-use Traditional\Bundle\UserBundle\Event\UserWasRegistered;
-use SimpleBus\Message\Recorder\RecordsMessages;
 
 class RegisterUserHandler implements MessageHandler
 {
@@ -19,17 +17,11 @@ class RegisterUserHandler implements MessageHandler
     private $doctrine;
 
     /**
-     * @var RecordsMessages
-     */
-    private $eventRecorder;
-
-    /**
      * @param ManagerRegistry $doctrine
      */
-    public function __construct(ManagerRegistry $doctrine, RecordsMessages $eventRecorder)
+    public function __construct(ManagerRegistry $doctrine)
     {
         $this->doctrine = $doctrine;
-        $this->eventRecorder = $eventRecorder;
     }
 
     /**
@@ -45,7 +37,5 @@ class RegisterUserHandler implements MessageHandler
 
         $entityManager = $this->doctrine->getManager();
         $entityManager->persist($user);
-
-        $this->eventRecorder->record(new UserWasRegistered($user));
     }
 }

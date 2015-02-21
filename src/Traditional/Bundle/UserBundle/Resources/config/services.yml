@@ -4,7 +4,6 @@ services:
         class: Traditional\Bundle\UserBundle\Command\RegisterUserHandler
         arguments:
             doctrine: "@doctrine"
-            eventRecorder: "@event_recorder"
         tags:
             - { name: command_handler, handles: register_user }
 
