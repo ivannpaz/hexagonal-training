@@ -7,6 +7,7 @@ use SimpleBus\Message\Name\NamedMessage;
 use SimpleBus\Message\Message;
 use Traditional\Bundle\UserBundle\Entity\User;
 use SimpleBus\Message\Handler\MessageHandler;
+use Traditional\Bundle\UserBundle\Entity\EmailAddress;
 
 class RegisterUserHandler implements MessageHandler
 {
@@ -26,7 +27,7 @@ class RegisterUserHandler implements MessageHandler
     public function handle(Message $message)
     {
         $user = User::register(
-            $message->getEmail(),
+            EmailAddress::fromString($message->getEmail()),
             $message->getPassword(),
             $message->getCountry()
         );
@@ -35,7 +36,7 @@ class RegisterUserHandler implements MessageHandler
         $entityManager->persist($user);
 
         $emailMessage = \Swift_Message::newInstance('Welcome', 'Yes, welcome');
-        $emailMessage->setTo($user->getEmail());
+        $emailMessage->setTo((string)$user->getEmail());
         $this->mailer->send($emailMessage);
     }
 }

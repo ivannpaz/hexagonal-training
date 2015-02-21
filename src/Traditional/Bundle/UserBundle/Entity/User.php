@@ -4,6 +4,8 @@ namespace Traditional\Bundle\UserBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Assert\Assertion;
+use Traditional\Bundle\UserBundle\Entity\EmailAddress;
+use Symfony\Component\Intl\Intl;
 
 /**
  * @ORM\Entity
@@ -38,14 +40,14 @@ class User
      * @param string $password
      * @param string $country
      */
-    private function __construct($email, $password, $country)
+    private function __construct(EmailAddress $email, $password, $country)
     {
         $this->setEmail($email);
         $this->setPassword($password);
         $this->setCountry($country);
     }
 
-    public static function register($email, $password, $country)
+    public static function register(EmailAddress $email, $password, $country)
     {
         return new self($email, $password, $country);
     }
@@ -57,14 +59,12 @@ class User
 
     public function getEmail()
     {
-        return $this->email;
+        return EmailAddress::fromString($this->email);
     }
 
-    private function setEmail($email)
+    private function setEmail(EmailAddress $email)
     {
-        Assertion::email($email);
-
-        $this->email = $email;
+        $this->email = (string)$email;
     }
 
     public function getPassword()
