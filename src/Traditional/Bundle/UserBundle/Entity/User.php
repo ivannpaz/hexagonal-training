@@ -32,6 +32,23 @@ class User
      */
     private $country;
 
+    /**
+     * @param string $email
+     * @param string $password
+     * @param string $country
+     */
+    private function __construct($email, $password, $country)
+    {
+        $this->email = $email;
+        $this->password = $password;
+        $this->country = $country;
+    }
+
+    public static function register($email, $password, $country)
+    {
+        return new self($email, $password, $country);
+    }
+
     public function getId()
     {
         return $this->id;

@@ -1,0 +1,9 @@
+services:
+
+    register_user_handler:
+        class: Traditional\Bundle\UserBundle\Command\RegisterUserHandler
+        arguments:
+            doctrine: "@doctrine"
+            mailer: "@mailer"
+        tags:
+            - { name: command_handler, handles: register_user }
